@@ -1,5 +1,5 @@
 "use client"
-import Input from "../components/Input"
+import Input from "../components/input"
 import { useRouter } from "next/navigation"
 
 export default function Login(){
