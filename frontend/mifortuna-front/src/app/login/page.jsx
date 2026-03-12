@@ -15,11 +15,16 @@ export default function Login(){
 
                 <h3 className="text-[#105F0D] font-bold text-lg mt-6">Login</h3>
 
-                <div className="text-[#635B5B] font-normal text-xs mt-8">Email</div>
-                <Input />
-
-                <div className="text-[#635B5B] font-normal text-xs mt-3">Senha</div>
-                <Input />
+                <Input
+                    nome="Nome"
+                    type="text"
+                    value=""
+                />
+                <Input 
+                    nome="Senha"
+                    type="text"
+                    value="" 
+                />
 
                 <button onClick={() => router.push("/inicio")} className="bg-[#78BC5F] text-[#FFFFFF] text-base w-full py-1 rounded mt-6">Entrar</button>
                 
