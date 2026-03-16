@@ -1,0 +1,23 @@
+# docker-compose.yml
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: mifortuna
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: ./backend/mifortuna-back
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+
+  frontend:
+    build: ./frontend/mifortuna-front
+    ports:
+      - "3001:3001"
+    depends_on:
+      - backend
