@@ -13,7 +13,7 @@ export default function Login(){
             <div className="m-20 p-6">
                 <img src="/logo-login.png" alt="" className="w-[200] mt-8"/>
 
-                <h3 className="text-[#105F0D] font-bold text-lg mt-6">Login</h3>
+                <h3 className="text-[#105F0D] font-bold text-lg mt-6 mb-6">Login</h3>
 
                 <Input
                     nome="Nome"
