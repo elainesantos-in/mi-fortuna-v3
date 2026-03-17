@@ -1,8 +1,23 @@
 "use client"
 import {X} from "lucide-react"
+import { useState } from "react"
 import Input from "../../../components/input"
+import { criarCategoria } from "../../../service/categoriaService"
 
-export default function CriarCategorias({fechar}){
+export default function CriarCategorias({fechar, atualizar}){
+    const [nome, setNome] = useState("")
+    const [limiteGasto, setLimiteGasto] = useState("")
+    const [ativo, setAtivo] = useState(true)
+
+    async function Cadastrar(){
+        await criarCategoria({
+            nome: nome,
+            limiteGasto: Number(limiteGasto),
+            ativo: ativo
+        })
+        atualizar()
+        fechar()
+    }
     return(
         <div className="fixed inset-0 flex items-center justify-center z-50">
         <div className="bg-white w-[40%] shadow-2xl  rounded-2xl p-6">
@@ -17,22 +32,24 @@ export default function CriarCategorias({fechar}){
                     <Input
                         nome="Nome"
                         type="text"
-                        value=""
+                        value={nome}
+                        onChange={(e) => setNome(e.target.value)}
                     />
                 </div>
                 <div className="mt-6">
                     <Input
                         nome="Limite de Gastos"
                         type="number"
-                        value=""
+                        value={limiteGasto}
+                        onChange={(e) => setLimiteGasto(e.target.value)}
                     />
                 </div>
                 <div className="flex flex-row mt-6">
-                    <input type="checkbox" className="mr-2" />
+                    <input type="checkbox" className="mr-2" checked={ativo} onChange={(e) => setAtivo(e.target.checked)} />
                     <label>Ativado</label>
                 </div>
                 
-            <button className="bg-[#78BC5F] text-[#FFFFFF] text-base w-full py-2 rounded mt-6">Cadastrar</button>
+            <button onClick={Cadastrar} className="bg-[#78BC5F] text-[#FFFFFF] text-base w-full py-2 rounded mt-6">Cadastrar</button>
             </div>
         </div>
     </div>
