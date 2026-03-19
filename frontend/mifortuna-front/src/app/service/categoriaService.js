@@ -9,8 +9,14 @@ export async function criarCategoria(dados) {
     return response.json()
 }
 
-export async function listarCategorias() {
-    const response = await fetch(`${API_URL}/categorias`)
+export async function listarCategorias(ativo,nome) {
+    let url = `${API_URL}/categorias?ativo=${ativo}`
+
+    if (nome){
+    url += `&nome=${nome}`
+    }
+
+    const response = await fetch(url)
     return response.json()
 }
 

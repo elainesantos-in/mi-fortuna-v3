@@ -2,19 +2,25 @@
 import {X} from "lucide-react"
 import { useState } from "react"
 import Input from "../../../components/input"
-import { criarCategoria } from "../../../service/categoriaService"
+import { atualizarCategoria, criarCategoria } from "../../../service/categoriaService"
 
-export default function CriarCategorias({fechar, atualizar}){
-    const [nome, setNome] = useState("")
-    const [limiteGasto, setLimiteGasto] = useState("")
-    const [ativo, setAtivo] = useState(true)
+export default function CriarCategorias({fechar, atualizar,categoria}){
+    const [nome, setNome] = useState(categoria?.nome ||"")
+    const [limiteGasto, setLimiteGasto] = useState(categoria?.limiteGasto || "")
+    const [ativo, setAtivo] = useState(categoria?.ativo ?? true)
 
-    async function Cadastrar(){
-        await criarCategoria({
+    async function Salvar(){
+        const dados = {
             nome: nome,
             limiteGasto: Number(limiteGasto),
             ativo: ativo
-        })
+        }
+        
+        if(categoria){
+            await atualizarCategoria(categoria.id, dados)
+        } else {
+            await criarCategoria(dados)
+        }
         atualizar()
         fechar()
     }
@@ -25,7 +31,7 @@ export default function CriarCategorias({fechar, atualizar}){
                 <button className="flex items-end"  onClick={fechar}><X/></button>
             </div>
             <div className="flex justify-center">
-                <h2 className="font-semibold text-lg">Cadastrar Categoria</h2>
+                <h2>{categoria ? "Editar Categoria" : "Cadastrar Categoria"}</h2>
             </div>
             <div className="p-6">
                 <div>
@@ -49,7 +55,7 @@ export default function CriarCategorias({fechar, atualizar}){
                     <label>Ativado</label>
                 </div>
                 
-            <button onClick={Cadastrar} className="bg-[#78BC5F] text-[#FFFFFF] text-base w-full py-2 rounded mt-6">Cadastrar</button>
+            <button onClick={Salvar} className="bg-[#78BC5F] text-[#FFFFFF] text-base w-full py-2 rounded mt-6">{categoria ? "Salvar" : "Cadastrar"}</button>
             </div>
         </div>
     </div>
