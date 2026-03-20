@@ -11,7 +11,7 @@ export class ReceitasService {
   constructor(
     @InjectRepository(Receita)
     private receitaRepository: Repository<Receita>,
-) {}
+  ) {}
 
   create(createReceitaDto: CreateReceitaDto) {
     const receita = this.receitaRepository.create(createReceitaDto);
