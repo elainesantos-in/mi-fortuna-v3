@@ -29,9 +29,3 @@ export async function atualizarReceita(id, dados) {
     return response.json()
 }
 
-export async function deletarReceita(id) {
-    const response = await fetch(`${API_URL}/receitas/${id}`, {
-        method: "DELETE"
-    })
-    return response.json()
-}
