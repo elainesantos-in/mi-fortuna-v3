@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategoriasModule } from './categorias/categorias.module';
 import { ReceitasModule } from './receitas/receitas.module';
+import { FormaPagamentoModule } from './forma-pagamento/forma-pagamento.module';
 
 
 @Module({
@@ -20,6 +21,7 @@ import { ReceitasModule } from './receitas/receitas.module';
     }),
     CategoriasModule,
     ReceitasModule,
+    FormaPagamentoModule,
 ],
   controllers: [AppController],
   providers: [AppService],
