@@ -5,6 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategoriasModule } from './categorias/categorias.module';
 import { ReceitasModule } from './receitas/receitas.module';
 import { FormaPagamentoModule } from './forma-pagamento/forma-pagamento.module';
+import { UsuariosModule } from './usuarios/usuarios.module';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -22,6 +24,8 @@ import { FormaPagamentoModule } from './forma-pagamento/forma-pagamento.module';
     CategoriasModule,
     ReceitasModule,
     FormaPagamentoModule,
+    UsuariosModule,
+    AuthModule,
 ],
   controllers: [AppController],
   providers: [AppService],

@@ -31,23 +31,23 @@ export default function CriarFormasPagamento({fechar, atualizar, formaPagamento}
                 <button className="flex items-end"  onClick={fechar}><X/></button>
             </div>
             <div className="flex justify-center">
-                <h2>{formaPagamento ? "Editar Forma de Pagamento" : "Cadastrar Forma de Pagamento"}</h2>
+                <h2>{formaPagamento ? "Editar" : "Cadastrar"}</h2>
             </div>
             <div className="p-6">
                 <div>
                     <Input
-                        nome="Nome da Forma de Pagamento"
+                        nome="Forma de Pagamento"
                         type="text"
                         value={nome}
                         onChange={(e) => setNome(e.target.value)}
                     />
                 </div>
-                <div className="mt-6">
-                    <label className="text-[#635B5B] font-normal text-base mt-3">Tipos de pagamento</label>
+                <div className="flex flex-col mt-5">
+                    <label className="text-[#635B5B] font-normal text-base mt-6">Tipos de pagamento</label>
                         <select value={tipoPag} 
-                        onChange={(e) => setTipoPag(e.target.value)} className="w-32 bg-[#E5F1DF] py-1 px-1 rounded outline-none focus:bg-white focus:border focus:border-[#78BC5F]">
+                        onChange={(e) => setTipoPag(e.target.value)} className="w-full bg-[#E5F1DF] mt-1 py-1 px-1 rounded outline-none focus:bg-white focus:border focus:border-[#78BC5F]">
                             <option value="Dinheiro">Dinheiro</option>
-                            <option   value="Conta Bancaria">Conta Bancaria / Pix</option>
+                            <option   value="Conta Bancária / PIX">Conta Bancária / Pix</option>
                             <option value="Cartão de Crédito">Cartão de Crédito</option>
                             <option value="Cartão de Débito">Cartão de Débito</option>
                         </select>

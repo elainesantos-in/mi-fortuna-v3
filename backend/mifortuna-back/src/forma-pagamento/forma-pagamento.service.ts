@@ -14,13 +14,16 @@ export class FormaPagamentoService {
     private formaPagamentoRepository: Repository<FormaPagamento>,
   ) {}
 
-  create(createFormaPagamentoDto: CreateFormaPagamentoDto) {
-    const formaPagamento = this.formaPagamentoRepository.create(createFormaPagamentoDto);
+  async  create(createFormaPagamentoDto: CreateFormaPagamentoDto, usuarioId: number) {
+    const formaPagamento = this.formaPagamentoRepository.create({
+      ...createFormaPagamentoDto,
+      usuario: {id: usuarioId},
+    })  
     return this.formaPagamentoRepository.save(formaPagamento);
   }
 
-  findAll(ativo?: boolean, nome?: string) {
-    const where: any = {};
+  findAll(usuarioId: number, ativo?: boolean, nome?: string) {
+    const where: any = { usuario: {id: usuarioId } };
     if (ativo !== undefined) {
       where.ativo = ativo;
     }
