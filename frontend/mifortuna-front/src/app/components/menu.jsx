@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation"
 
 export default function Menu(){
     const pathname = usePathname()
-    if(pathname === "/login" || pathname === "/") return null
+    if(pathname === "/login" || pathname === "/" || pathname === "/usuario/login" || pathname === "/usuario/cadastro-usuario") return null
 
     return(
         <div className="flex items-center rounded-br-xl rounded-bl-lx">

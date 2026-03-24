@@ -8,18 +8,22 @@ import { ILike } from 'typeorm';
 
 @Injectable()
 export class CategoriasService {
+  
   constructor(
     @InjectRepository(Categoria)
     private categoriaRepository: Repository<Categoria>,
   ) {}
 
-  create(createCategoriaDto: CreateCategoriaDto) {
-    const categoria = this.categoriaRepository.create(createCategoriaDto);
+async create(createCategoriaDto: CreateCategoriaDto, usuarioId: number) {
+    const categoria = this.categoriaRepository.create({
+      ...createCategoriaDto,
+      usuario: {id: usuarioId},
+    })
     return this.categoriaRepository.save(categoria);
   }
 
-  findAll(ativo?: boolean, nome?: string) {
-    const where: any = {};
+  findAll(usuarioId: number, ativo?: boolean, nome?: string, ) {
+    const where: any = { usuario: {id: usuarioId } };
     if (ativo !== undefined) {
       where.ativo = ativo;
     }

@@ -13,13 +13,16 @@ export class ReceitasService {
     private receitaRepository: Repository<Receita>,
   ) {}
 
-  create(createReceitaDto: CreateReceitaDto) {
-    const receita = this.receitaRepository.create(createReceitaDto);
+async  create(createReceitaDto: CreateReceitaDto, usuarioId: number) {
+    const receita = this.receitaRepository.create({
+      ...createReceitaDto,
+      usuario: {id: usuarioId},
+    });
     return this.receitaRepository.save(receita);
   }
 
-  findAll(ativo?: boolean, nome?: string) {
-    const where: any = {};
+  findAll(usuarioId: number, ativo?: boolean, nome?: string) {
+    const where: any = { usuario: {id: usuarioId } };
     if (ativo !== undefined) {
       where.ativo = ativo;
     }

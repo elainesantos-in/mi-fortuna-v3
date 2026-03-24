@@ -30,7 +30,7 @@ export default function FormasPagamento(){
     return(
         <div className="h-[calc(100vh-72px)] flex flex-col bg-[#F0FFF0] pt-10 text-[#635B5B]">
             <div className="w-[80%] mx-auto flex-1 bg-white rounded-t-2xl pt-4 flex flex-col overflow-hidden">
-                <h1 className="flex justify-center text-xl font-semibold p-4">Formas de pagamento</h1>
+                <h1 className="flex justify-center text-xl font-semibold p-4">Formas de Pagamento</h1>
                 <div className="flex flex-row items-end w-[85%] mx-auto">
                     <div className="flex flex-row items-end gap-2">
                         <SeletorStatus 
@@ -52,7 +52,7 @@ export default function FormasPagamento(){
                 <div className="flex flex-row w-[85%] items-start mx-auto mt-8 px-2 ">
                     <div className="flex-1">Forma de Pagamento</div>
                     <div className="flex-1"></div>
-                    <div className="flex-1"></div>
+                    <div className="flex-1 text-center">Tipo Pagamento</div>
                     <div className="flex-1"></div>
                 </div>
 
@@ -62,8 +62,8 @@ export default function FormasPagamento(){
 
                             <div className="flex-1">{fp.nome}</div>
                             <div className="flex-1 mr-2"></div>
+                            <div className="flex-1 text-center">{fp.tipoPagamento}</div>
                             <div className="flex-1 "></div>
-                            <div className="flex-1 w-2"></div>
                             <button className="ml-auto" onClick={()=> {setFormaPagamentoEditando(fp), setModalAberto(true)}}>
                                 <img src="/Editar-icon.svg" alt="" />
                             </button>

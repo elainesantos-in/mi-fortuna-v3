@@ -18,7 +18,7 @@ export default function Categorias(){
     async function buscarCategorias(status,nome){
         if(status !== undefined){
             const dados = await listarCategorias(status,nome)
-        setCategorias(dados)
+            setCategorias(dados)
         }
     }
 

@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne} from 'typeorm';
+import { Usuario } from '../../usuarios/entities/usuario.entity';
 
 @Entity()
 export class Receita {
@@ -13,4 +14,7 @@ export class Receita {
 
     @Column({ default: true })
     ativo: boolean;
+
+    @ManyToOne(() => Usuario)
+    usuario: Usuario;
 }
