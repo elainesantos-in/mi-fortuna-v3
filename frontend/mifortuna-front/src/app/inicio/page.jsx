@@ -7,10 +7,12 @@ import BotaoExcluir from "../components/botaoExcluir";
 import CriarDespesa from "./Despesa/modalCriarDespesa/criarDespesa"
 import { listarDespesas } from "@/app/service/despesaService"
 import ExcluirDespesa from "./Despesa/modalExcluirDespesa/excluirDespesa"
+import { listarCategorias } from "@/app/service/categoriaService"
+import { listarFormasPagamento } from "@/app/service/formaPagamentoService"
 
 export default function Inicio() {
 
-    const [modalAberto, setModalAberto] = useState(false)
+    const [modalAberto, setModalAberto] = useState("false")
     const [despesas, setDespesas] = useState([])
     const [despesaEditando, setDespesaEditando] = useState(null)
     const [despesasSelecionadas, setDespesasSelecionadas] = useState([])
@@ -18,9 +20,35 @@ export default function Inicio() {
     const [abaAtiva, setAbaAtiva] = useState("despesas")
     const [mesAtual, setMesAtual] = useState(new Date().getMonth())
     const [anoAtual, setAnoAtual] = useState(new Date().getFullYear())
+    const [tipoFiltro, setTipoFiltro] = useState("")
+    const [valorFiltro, setValorFiltro] = useState("")
+    const [categorias, setCategorias] = useState([])
+    const [formasPagamento, setFormasPagamento] = useState([])
+    const [filtroAtivo, setFiltroAtivo] = useState({ tipo: "", valor: "" })
+
+
 
     const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
     
+    const despesasFiltradas = despesas.filter((desp) => {
+    if (!desp.dataVencimento) return false
+    const data = new Date(desp.dataVencimento)
+    if (data.getMonth() !== mesAtual || data.getFullYear() !== anoAtual) return false
+    
+    if (filtroAtivo.tipo === "categoria" && filtroAtivo.valor) {
+        return desp.categoria?.id === Number(filtroAtivo.valor)
+    }
+    if (filtroAtivo.tipo === "formaPagamento" && filtroAtivo.valor) {
+        return desp.formaPagamento?.id === Number(filtroAtivo.valor)
+    }
+    if (filtroAtivo.tipo === "status" && filtroAtivo.valor) {
+        return desp.status === filtroAtivo.valor
+    }
+    
+    return true
+})
+
+
     let mesAnterior = mesAtual === 0 ? 11 : mesAtual - 1
     let proximoMes = mesAtual === 11 ? 0 : mesAtual + 1
     
@@ -32,6 +60,29 @@ export default function Inicio() {
     useEffect(() => {
         buscarDespesas()
     }, [])
+
+    async function buscarCategorias(){
+        const dados = await listarCategorias(true)
+        setCategorias(dados)
+    }
+    
+    useEffect(() => {
+        buscarCategorias()
+    }, [])
+
+    async function buscarFormasPagamento(){
+        const dados = await listarFormasPagamento(true)
+        setFormasPagamento(dados)
+    }
+
+    useEffect(() => {
+        buscarFormasPagamento()
+    }, [])
+
+    function pesquisar(){
+        setFiltroAtivo({ tipo: tipoFiltro, valor: valorFiltro })
+    }
+
 
     return (
         <div className="min-h-screen bg-[#F0FFF0] text-[#635B5B] mb-">
@@ -65,24 +116,34 @@ export default function Inicio() {
                                 <div className="flex flex-row items-end gap-2">
                                     <div className="flex flex-col">
                                         <label className="text-[#635B5B] font-normal text-sm mt-3">Pesquisar por:</label>
-                                        <select className="w-32 bg-[#E5F1DF] py-1 px-1 rounded outline-none focus:bg-white focus:border focus:border-[#78BC5F]">
-                                            <option value="true"></option>
-                                            <option value="true">Categoria</option>
-                                            <option value="false">Forma de Pagamento</option>
-                                            <option value="false">Status</option>
+                                        <select value={tipoFiltro} className="w-32 bg-[#E5F1DF] py-1 px-1 rounded outline-none focus:bg-white focus:border focus:border-[#78BC5F]" onChange={(e) => setTipoFiltro(e.target.value)}>
+                                            <option value=""></option>
+                                            <option value="categoria">Categoria</option>
+                                            <option value="formaPagamento">Forma de Pagamento</option>
+                                            <option value="status">Status</option>
                                         </select>
                                     </div>
                                     <div className="flex flex-col">
                                         <label className="text-[#635B5B] font-normal text-sm mt-3">Opções</label>
-                                        <select className="w-60 bg-[#E5F1DF] py-1 px-1 rounded outline-none focus:bg-white focus:border focus:border-[#78BC5F]">
-                                            <option value="true"></option>
-                                            <option value="true">Categoria</option>
-                                            <option value="false">Forma de Pagamento</option>
-                                            <option value="false">Status</option>
+                                        <select value={valorFiltro} className="w-60 bg-[#E5F1DF] py-1 px-1 rounded outline-none focus:bg-white focus:border focus:border-[#78BC5F]" onChange={(e) => setValorFiltro(e.target.value)}>
+                                             <option value=""></option>
+                                                {tipoFiltro === "categoria" && categorias.map((cat) => (
+                                                    <option key={cat.id} value={cat.id}>{cat.nome}</option>
+                                                ))}
+                                                {tipoFiltro === "formaPagamento" && formasPagamento.map((fp) => (
+                                                    <option key={fp.id} value={fp.id}>{fp.nome}</option>
+                                                ))}
+                                                {tipoFiltro === "status" && (
+                                                    <>
+                                                        <option value="Não Pago" selected >Não Pago</option>
+                                                        <option value="Agendado">Agendado</option>
+                                                        <option value="Pago">Pago</option>
+                                                    </>
+                                                )}
                                         </select>
                                     </div>
                                     <BotaoPesquisar
-                                        // onClick={() => buscarCategorias(status,nome)}
+                                        onClick={pesquisar}
                                     />
                                 </div>
                                 <BotaoCriarNovo
@@ -95,16 +156,17 @@ export default function Inicio() {
                             </div>
                             <div className="flex flex-col justify-center ml-8">
                                 <div className="flex flex-row w-[90%] items-star mt-8 ml-7 px-2 text-sm ">
-                                    <div className="flex-2">Categorias</div>
                                     <div className="flex-1">Nome</div>
+                                    <div className="flex-2">Categoria</div>
                                     <div className="flex-1">Data Venc</div>
                                     <div className="flex-1">For.Pag</div>
                                     <div className="flex-1">Valor</div>
+                                    <div className="flex-1">Parc.</div>
                                     <div className="flex-1">Status</div>
                                 </div>
 
                                 <div className="flex flex-col flex-1 overflow-y-auto">
-                                    {despesas.map((desp) =>(
+                                    {despesasFiltradas.map((desp) =>(
                                         <div key={desp.id} className="flex flex-row items-center">
                                             <input type="checkbox" className="m-2"
                                                 checked={despesasSelecionadas.includes(desp.id)}
@@ -116,14 +178,15 @@ export default function Inicio() {
                                                     }
                                                 }}
                                             />
-                                            <div className="flex flex-row w-[90%] items-center mx-2 rounded px-2 py-1.5 my-1 bg-[#E4FDE3]">
-                                                <div className="flex-2 font-semibold">{desp.categoria?.nome}</div>
-                                                <div className="flex-1">{desp.nomeDespesa}</div>
-                                                <div className="flex-1 font-semibold">{desp.dataVencimento}</div>
-                                                <div className="flex-1 w-2">{desp.formaPagamento?.nome}</div>
-                                                <div className="flex-1 font-semibold">{desp.valor}</div>
-                                                <div className="flex-1 w-2">{desp.status}</div>
-                                                <button className="ml-auto" onClick={() => { setDespesaEditando(desp); setModalAberto(true); }}>
+                                            <div className={`flex flex-row w-[90%] items-center mx-2 rounded px-2 py-1.5 my-1 ${desp.status === "Pago" ? "bg-[#E4FDE3]" : "bg-[#EEEEEE]"}`}>
+                                                <div className="flex-1 font-semibold text-sm">{desp.nomeDespesa}</div>
+                                                <div className="flex-2 text-sm">{desp.categoria?.nome}</div>
+                                                <div className="flex-1 font-semibold text-sm">{desp.dataVencimento}</div>
+                                                <div className="flex-1 w-2 text-sm">{desp.formaPagamento?.nome}</div>
+                                                <div className="flex-1 font-semibold text-sm">{desp.valor}</div>
+                                                <div className="flex-1 text-sm">{desp.parcelaAtual ? `${desp.parcelaAtual}/${desp.quantidadeParcelas}` : "-"}</div>
+                                                <div className="flex-1 w-2 text-sm">{desp.status}</div>
+                                                <button className="ml-auto text-sm" onClick={() => { setDespesaEditando(desp); setModalAberto(true); }}>
                                                     <img src="/Editar-icon.svg"></img>
                                                 </button>
                                             </div>
@@ -157,8 +220,8 @@ export default function Inicio() {
                 ids={despesasSelecionadas}
                 atualizar={buscarDespesas}
             />
-)}
+    )}
 
         </div>
-    )
+)
 }

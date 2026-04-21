@@ -7,14 +7,13 @@ import { listarCategorias } from "@/app/service/categoriaService"
 import { listarFormasPagamento } from "@/app/service/formaPagamentoService"
 
 export default function CriarDespesa({fechar, atualizar, despesa}){
-    const [nomeDespesa, setNomeDespesa] = useState(despesa?.nome ||"")
+    const [nomeDespesa, setNomeDespesa] = useState(despesa?.nomeDespesa ||"")
     const [valor, setValor] = useState(despesa?.valor||"")
-    const [categoria, setCategoria] = useState(despesa?.categoria || "")
-    const [formaPagamento, setFormaPagamento] = useState(despesa?.formaPagamento || "")
-    const [recorrencia, setRecorrencia] = useState(despesa?.recorrencia || "")
-    const [quantidadeParcelas, setQuantidadeParcelas] = useState(despesa?.quantParcelas || "")
+    const [categoria, setCategoria] = useState(despesa?.categoria?.id || "")
+    const [formaPagamento, setFormaPagamento] = useState(despesa?.formaPagamento?.id || "")
+    const [quantidadeParcelas, setQuantidadeParcelas] = useState(despesa?.quantidadeParcelas || "")
     const [dataVencimento, setDataVencimento] = useState(despesa?.dataVencimento || "")
-    const [status, setStatus] = useState(despesa?.status || "")
+    const [status, setStatus] = useState(despesa?.status || "Não Pago")
     const [fixo, setFixo] = useState(despesa?.fixo ?? true)
 
     const [categorias, setCategorias] = useState([])
@@ -34,18 +33,22 @@ export default function CriarDespesa({fechar, atualizar, despesa}){
             setFormasPagamento(dados)
     }
 
-    useEffect(() => {
+    useEffect(() => {      
         buscarFormasPagamento()
     }, [])
 
 
     async function Salvar(){
+
+        if(!nomeDespesa || !valor || !categoria || !formaPagamento || !dataVencimento){
+            alert("preencha os campos obrigatorios")
+                return
+        }
         const dados = {
             nomeDespesa: nomeDespesa,
             valor: parseFloat(valor) || 0,
             categoria: parseInt(categoria) || null,
             formaPagamento: parseInt(formaPagamento) || null,
-            recorrencia: recorrencia || null,
             quantidadeParcelas: quantidadeParcelas ? parseInt(quantidadeParcelas) : null,
             dataVencimento: dataVencimento || null,
             status: status,
@@ -67,11 +70,11 @@ export default function CriarDespesa({fechar, atualizar, despesa}){
                 <button className="flex items-end"  onClick={fechar}><X/></button>
             </div>
             <div className="flex justify-center">
-                <h2>{despesa ? "Editar" : "Cadastrar"}</h2>
+                <h2>{despesa ? "Editar Despesa" : "Cadastrar Despesa"}</h2>
             </div>
             <div className="p-6">
                 <div className="flex flex-row">
-                    <div className="w-[55%] mr-1">
+                    <div className="w-[60%] mr-1">
                         <Input
                         nome="Nome da Despesa"
                         type="text"
@@ -91,7 +94,7 @@ export default function CriarDespesa({fechar, atualizar, despesa}){
                     
                 </div>
                 <div className="flex flex-row">
-                    <div className="flex flex-col mt-1 w-[55%] mr-1">
+                    <div className="flex flex-col mt-1 w-[60%] mr-1">
                         <label className="text-[#635B5B] font-normal text-base mt-4">Categoria</label>
                             <select value={categoria} 
                             onChange={(e) => setCategoria(e.target.value)} className="w-full bg-[#E5F1DF] mt-1 py-1 px-1 rounded outline-none focus:bg-white focus:border focus:border-[#78BC5F] h-8">
@@ -117,18 +120,7 @@ export default function CriarDespesa({fechar, atualizar, despesa}){
                     </div>
                 </div>
                 <div className="flex flex-row">
-                    <div className="flex flex-col mt-1 w-[55%] mr-1">
-                        <label className="text-[#635B5B] font-normal text-base mt-4">Recorrência</label>
-                            <select value={recorrencia} 
-                            onChange={(e) => setRecorrencia(e.target.value)} className="w-full bg-[#E5F1DF]  py-1 px-1 rounded outline-none focus:bg-white focus:border focus:border-[#78BC5F] h-8">
-                                <option value="" ></option>
-                                <option value="15">Quinzenal</option>
-                                <option value="7">Semanal</option>
-                                <option value="30">Mensal</option>
-                                <option value="365">Anual</option>
-                            </select>
-                    </div>
-                    <div className="flex flex-col mt-5 w-[40%]">
+                    <div className="flex flex-col mt-5 w-[60%] mr-1">
                         <Input
                             nome="Quantidade de Parcelas"
                             type="number"
@@ -136,9 +128,7 @@ export default function CriarDespesa({fechar, atualizar, despesa}){
                             onChange={(e) => setQuantidadeParcelas(e.target.value)}
                         />
                     </div>
-                </div>
-                <div className="flex flex-row">
-                    <div className="flex flex-col mt-4 w-[55%] mr-1">
+                    <div className="flex flex-col mt-5 w-[40%] mr-1">
                         <Input
                             nome="Data de Vencimento"
                             type="date"
@@ -146,14 +136,15 @@ export default function CriarDespesa({fechar, atualizar, despesa}){
                             onChange={(e) => setDataVencimento(e.target.value)}
                         />
                     </div>
-                    <div className="flex flex-col w-[40%]">
+                </div>
+                <div className="flex flex-row">
+                    <div className="flex flex-col w-full">
                         <label className="text-[#635B5B] font-normal text-base mt-4">Status</label>
                             <select value={status} 
                             onChange={(e) => setStatus(e.target.value)} className="w-full bg-[#E5F1DF]  py-1 px-1 rounded outline-none focus:bg-white focus:border focus:border-[#78BC5F] h-8">
-                                <option value="" ></option>
+                                <option value="Não Pago">Não Pago</option>
                                 <option value="Agendado">Agendado</option>
                                 <option value="Pago">Pago</option>
-                                <option value="Não Pago">Não Pago</option>
                             </select>
                     </div>
                 </div>

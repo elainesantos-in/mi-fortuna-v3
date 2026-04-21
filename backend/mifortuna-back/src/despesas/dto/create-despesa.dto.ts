@@ -3,9 +3,10 @@ export class CreateDespesaDto {
     valor: number;
     categoria: number;
     formaPagamento: number;
-    recorrencia: string;
-    quantidadeParcelas: number;
+    quantidadeParcelas?: number;
     dataVencimento: string;
     status: string;
     fixo?: boolean;
+    parcelaAtual?: number;
+    grupoParcelas: string;
 }

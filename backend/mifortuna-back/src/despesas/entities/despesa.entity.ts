@@ -22,9 +22,6 @@ export class Despesa {
     formaPagamento: FormaPagamento;
 
     @Column({ nullable: true })
-    recorrencia: string;
-
-    @Column({ nullable: true })
     quantidadeParcelas: number;
 
     @Column({ type: 'date', nullable: true })
@@ -35,6 +32,12 @@ export class Despesa {
     
     @Column({ default: false })
     fixo: boolean;
+
+    @Column({ nullable: true })
+    parcelaAtual: number;
+
+    @Column({ nullable: true })
+    grupoParcelas: string;
 
     @ManyToOne(() => Usuario)
     usuario: Usuario;
