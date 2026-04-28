@@ -9,7 +9,7 @@ const inter = Inter({
 export default function RootLayout({ children }) {
   return (
     <html lang="pt-br">
-      <body className={`${inter.className} flex flex-col h-screen`}>
+      <body className={`${inter.className} flex flex-col h-screen`} suppressHydrationWarning>
         <Menu />
         {children}
       </body>

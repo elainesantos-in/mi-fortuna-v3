@@ -85,18 +85,24 @@ export class DespesasService {
     return this.despesaRepository.update(id, dados);
   }
 
-  async remove(id: number ) {
+  async remove(id: number, modo?:string ) {
     const despesa = await this.despesaRepository.findOne({ where: { id } });
+
+    console.log("=== REMOVE chamado ===")
+    console.log("id:", id, "modo:", modo)
+    console.log("despesa encontrada:", despesa)
+
 
     if(!despesa){
       throw new Error('Despesas não encontrada')
     }
 
-    if (despesa.quantidadeParcelas === null ){
+    if (modo === "apenas-atual" ){
+      console.log(">>> Branch: apenas-atual, deletando id", id)
       return this.despesaRepository.delete(id)
     }
-    if(despesa.parcelaAtual < despesa.quantidadeParcelas){
-
+    if(modo === "futuras" ){
+      console.log(">>> Branch: futuras, deletando grupo:", despesa.grupoParcelas, "parcelaAtual >=", despesa.parcelaAtual)
       return this.despesaRepository.delete(
           { 
             grupoParcelas: despesa.grupoParcelas,
@@ -104,6 +110,7 @@ export class DespesasService {
           }
         )
     }else{
+      console.log(">>> Branch: default, deletando id", id)
       return this.despesaRepository.delete(id)
     }
   }

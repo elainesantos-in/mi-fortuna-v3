@@ -39,9 +39,14 @@ export async function atualizarDespesa(id, dados) {
     return response.json()
 }
 
-export async function excluirDespesa(id){
-    const response = await fetch(`${API_URL}/despesas/${id}`, 
-    {
+export async function excluirDespesa(id, modo){
+    let url = `${API_URL}/despesas/${id}`
+
+    if(modo){
+        url += `?modo=${modo}`
+    }
+    
+    const response = await fetch(url,{
         method: "DELETE",
         headers:{
             "Authorization": `Bearer ${localStorage.getItem("token")}`

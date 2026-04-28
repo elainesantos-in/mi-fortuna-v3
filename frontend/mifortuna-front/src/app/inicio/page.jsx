@@ -15,7 +15,6 @@ export default function Inicio() {
     const [modalAberto, setModalAberto] = useState("false")
     const [despesas, setDespesas] = useState([])
     const [despesaEditando, setDespesaEditando] = useState(null)
-    const [despesasSelecionadas, setDespesasSelecionadas] = useState([])
     const [modalExcluirAberto, setModalExcluirAberto] = useState(false)
     const [abaAtiva, setAbaAtiva] = useState("despesas")
     const [mesAtual, setMesAtual] = useState(new Date().getMonth())
@@ -25,6 +24,7 @@ export default function Inicio() {
     const [categorias, setCategorias] = useState([])
     const [formasPagamento, setFormasPagamento] = useState([])
     const [filtroAtivo, setFiltroAtivo] = useState({ tipo: "", valor: "" })
+    const [despesaAtualExcluir, setDespesaAtualExcluir] = useState(null)
 
 
 
@@ -97,8 +97,16 @@ export default function Inicio() {
 
                             <button role="tab" className={`w-[50%] rounded-lg py-2 ${abaAtiva === "despesas" ? "bg-[#E5F1DF]" : ""}`} onClick={() => setAbaAtiva("despesas")}>Despesas</button>    
                         </div>
+                        <div className="text-center text-2xl font-semibold mt-4 bg-[#EEEEEE] p-2 mx-8 rounded-lg">{anoAtual}</div>
                         <div className="flex flex-row items-center justify-center p-6 mt-6">
-                            <button onClick={() => setMesAtual(mesAtual === 0 ? 11 : mesAtual - 1)}
+                            <button  onClick={() => {
+                                if (mesAtual === 0) {
+                                    setMesAtual(11);
+                                    setAnoAtual(anoAtual - 1);
+                                } else {
+                                    setMesAtual(mesAtual - 1);
+                                }
+                            }}
                             className="p-1 rounded-md hover:bg-[#EEEEEE]"><ChevronLeft size={20} />
                             </button>
 
@@ -108,7 +116,15 @@ export default function Inicio() {
 
                             <div className="w-70 flex items-center justify-center h-8 text-base rounded-md">{meses[proximoMes]}</div>
 
-                            <button onClick={() => setMesAtual(mesAtual === 11 ? 0 : mesAtual + 1)} className="p-1 rounded-md hover:bg-[#EEEEEE]"><ChevronRight size={20} /></button>
+                            <button onClick={() => {
+                                if (mesAtual === 11) {
+                                    setMesAtual(0);
+                                    setAnoAtual(anoAtual + 1);
+                                } else {
+                                    setMesAtual(mesAtual + 1);
+                                }
+                            }} className="p-1 rounded-md hover:bg-[#EEEEEE]"><ChevronRight size={20} />
+                            </button>
                         </div>
                         {abaAtiva === "despesas" && (
                         <>
@@ -149,10 +165,6 @@ export default function Inicio() {
                                 <BotaoCriarNovo
                                     onClick={()=>setModalAberto(true)}
                                 />
-                                <BotaoExcluir
-                                    onClick={()=>setModalExcluirAberto(true)}
-                                    disabled={despesasSelecionadas.length === 0}
-                                />
                             </div>
                             <div className="flex flex-col justify-center ml-8">
                                 <div className="flex flex-row w-[90%] items-star mt-8 ml-7 px-2 text-sm ">
@@ -168,16 +180,6 @@ export default function Inicio() {
                                 <div className="flex flex-col flex-1 overflow-y-auto">
                                     {despesasFiltradas.map((desp) =>(
                                         <div key={desp.id} className="flex flex-row items-center">
-                                            <input type="checkbox" className="m-2"
-                                                checked={despesasSelecionadas.includes(desp.id)}
-                                                onChange={(e) => {
-                                                    if (e.target.checked) {
-                                                        setDespesasSelecionadas([...despesasSelecionadas, desp.id])
-                                                    } else {
-                                                        setDespesasSelecionadas(despesasSelecionadas.filter(id => id !== desp.id))
-                                                    }
-                                                }}
-                                            />
                                             <div className={`flex flex-row w-[90%] items-center mx-2 rounded px-2 py-1.5 my-1 ${desp.status === "Pago" ? "bg-[#E4FDE3]" : "bg-[#EEEEEE]"}`}>
                                                 <div className="flex-1 font-semibold text-sm">{desp.nomeDespesa}</div>
                                                 <div className="flex-2 text-sm">{desp.categoria?.nome}</div>
@@ -189,6 +191,9 @@ export default function Inicio() {
                                                 <button className="ml-auto text-sm" onClick={() => { setDespesaEditando(desp); setModalAberto(true); }}>
                                                     <img src="/Editar-icon.svg"></img>
                                                 </button>
+                                                <BotaoExcluir
+                                                    onClick={ ()=> {setModalExcluirAberto(true); setDespesaAtualExcluir(desp)}}
+                                                />
                                             </div>
                                         </div>
                                     ))}
@@ -216,8 +221,8 @@ export default function Inicio() {
             )}
             {modalExcluirAberto && (
             <ExcluirDespesa 
-                fechar={() => { setModalExcluirAberto(false); setDespesasSelecionadas([]); }}
-                ids={despesasSelecionadas}
+                fechar={() => { setModalExcluirAberto(false); setDespesaAtualExcluir(null)}}
+                despesa={despesaAtualExcluir}
                 atualizar={buscarDespesas}
             />
     )}

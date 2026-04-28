@@ -2,12 +2,12 @@
 import {X} from "lucide-react"
 import { excluirDespesa } from "@/app/service/despesaService";
 
-export default function ExcluirDespesa({fechar, ids, atualizar}){
+export default function ExcluirDespesa({fechar, despesa, atualizar}){
 
-    async function excluir(){
-    for (const id of ids) {
-        await excluirDespesa(id)
-    }
+    const temParcelasFuturas = despesa.quantidadeParcelas > despesa.parcelaAtual
+
+    async function excluir(modo){
+    await excluirDespesa(despesa.id, modo)
     atualizar()
     fechar()
 }
@@ -22,16 +22,25 @@ export default function ExcluirDespesa({fechar, ids, atualizar}){
                 <div className="flex justify-center">
                     <h2 className="font-semibold">Excluir</h2>
                 </div>
-                <div className="text-center p-6">
-                    {ids.length > 1 
-                        ? "Tem certeza que deseja excluir as despesas selecionadas?"
-                        : "Tem certeza que deseja excluir a despesa selecionada?"
-                    }
+                <div className={ temParcelasFuturas ? "hidden" : ""}>
+                    <div className="text-center p-6">
+                    { "Tem certeza que deseja excluir a despesa selecionada?" }
+                    </div>
+                    <div className="flex flex-row justify-center p-2">
+                        <button onClick={fechar} className="w-[30%] bg-[#FFFFFF] border  border-[#78BC5F] text-[#78BC5F]  m-2 rounded-md h-8">Não</button>
+                        <button onClick={() => excluir("apenas-atual")} className="w-[30%] bg-[#78BC5F] h-8 rounded-md text-[#FFFFFF] m-2">Sim</button>
+                    </div>
                 </div>
-                <div className="flex flex-row justify-center p-2">
-                    <button onClick={fechar} className="w-[30%] bg-[#FFFFFF] border  border-[#78BC5F] text-[#78BC5F]  m-2 rounded-md h-8">Não</button>
-                    <button onClick={excluir} className="w-[30%] bg-[#78BC5F] h-8 rounded-md text-[#FFFFFF] m-2">Sim</button>
+                <div className={temParcelasFuturas ? "" : "hidden"}>
+                    <div className="text-center p-6">
+                    { "Essa despesa possui parcelas fututras, deseja excluir somente essa ou todas" }
+                    </div>
+                    <div className="flex flex-row justify-center p-2">
+                        <button onClick={() => excluir("apenas-atual")} className="w-[30%] bg-[#FFFFFF] border  border-[#78BC5F] text-[#78BC5F]  m-2 rounded-md h-8">Somente Essa</button>
+                        <button onClick={() => excluir("futuras")} className="w-[30%] bg-[#78BC5F] h-8 rounded-md text-[#FFFFFF] m-2">Todas</button>
+                    </div>
                 </div>
+                
             </div>
         </div>
     );

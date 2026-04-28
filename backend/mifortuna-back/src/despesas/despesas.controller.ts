@@ -37,7 +37,7 @@ export class DespesasController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.despesasService.remove(+id);
+  remove(@Param('id') id: string,@Query('modo') modo?: string,) {
+    return this.despesasService.remove(+id, modo);
   }
 }
