@@ -14,10 +14,11 @@ export default function CriarDespesa({fechar, atualizar, despesa}){
     const [quantidadeParcelas, setQuantidadeParcelas] = useState(despesa?.quantidadeParcelas || "")
     const [dataVencimento, setDataVencimento] = useState(despesa?.dataVencimento || "")
     const [status, setStatus] = useState(despesa?.status || "Não Pago")
-    const [fixo, setFixo] = useState(despesa?.fixo ?? true)
+    const [fixo, setFixo] = useState(despesa?.fixo ?? false)
 
     const [categorias, setCategorias] = useState([])
     const [formasPagamento, setFormasPagamento] = useState([])
+    const [erros, setErros] = useState({})
 
     async function buscarCategorias(){
             const dados = await listarCategorias(true)
@@ -40,10 +41,21 @@ export default function CriarDespesa({fechar, atualizar, despesa}){
 
     async function Salvar(){
 
-        if(!nomeDespesa || !valor || !categoria || !formaPagamento || !dataVencimento){
-            alert("preencha os campos obrigatorios")
-                return
+        const novosErros = {}
+
+        if(!nomeDespesa) novosErros.nomeDespesa = true
+        if(!valor) novosErros.valor = true
+        if(!categoria) novosErros.categoria = true
+        if(!formaPagamento) novosErros.formaPagamento = true
+        if(!dataVencimento) novosErros.dataVencimento = true
+
+        if(Object.keys(novosErros).length > 0) {
+            setErros(novosErros)
+            return
         }
+
+        setErros({})
+
         const dados = {
             nomeDespesa: nomeDespesa,
             valor: parseFloat(valor) || 0,
@@ -76,19 +88,26 @@ export default function CriarDespesa({fechar, atualizar, despesa}){
                 <div className="flex flex-row">
                     <div className="w-[60%] mr-1">
                         <Input
+                        erro={erros.nomeDespesa}
                         nome="Nome da Despesa"
                         type="text"
                         value={nomeDespesa}
-                        onChange={(e) => setNomeDespesa(e.target.value)}
+                        onChange={(e) => { setNomeDespesa(e.target.value)
+                        setErros({ ...erros, nomeDespesa: false })
+                        }}
+
                     />
                     </div>
                     
                     <div className="w-[40%] ">
                         <Input
+                        erro={erros.valor} 
                         nome="Valor"
                         type="number"
                         value={valor}
-                        onChange={(e) => setValor(e.target.value)}
+                        onChange={(e) => {setValor(e.target.value)
+                        setErros({ ...erros, valor: false })
+                        }}
                     />
                     </div>
                     
@@ -96,8 +115,11 @@ export default function CriarDespesa({fechar, atualizar, despesa}){
                 <div className="flex flex-row">
                     <div className="flex flex-col mt-1 w-[60%] mr-1">
                         <label className="text-[#635B5B] font-normal text-base mt-4">Categoria</label>
-                            <select value={categoria} 
-                            onChange={(e) => setCategoria(e.target.value)} className="w-full bg-[#E5F1DF] mt-1 py-1 px-1 rounded outline-none focus:bg-white focus:border focus:border-[#78BC5F] h-8">
+                            <select value={categoria}
+                            onChange={(e) => { setCategoria(e.target.value)
+                            setErros({ ...erros, categoria: false })
+                            }}
+                            className={`w-full bg-[#E5F1DF] mt-1 py-1 px-1 rounded outline-none focus:bg-white focus:border focus:border-[#78BC5F] h-8 ${erros.categoria ? "border-2 border-red-500" : ""}`}>
                                 <option value=""></option>
                                 {categorias.map((cat) => (
                                     <option key={cat.id} value={cat.id}>
@@ -108,8 +130,11 @@ export default function CriarDespesa({fechar, atualizar, despesa}){
                     </div>
                     <div className="flex flex-col mt-1 w-[40%]">
                         <label className="text-[#635B5B] font-normal text-base mt-4">Forma de Pagamento</label>
-                            <select value={formaPagamento} 
-                            onChange={(e) => setFormaPagamento(e.target.value)} className="w-full bg-[#E5F1DF] mt-1 py-1 px-1 rounded outline-none focus:bg-white focus:border focus:border-[#78BC5F] h-8">
+                            <select value={formaPagamento}
+                            onChange={(e) => {setFormaPagamento(e.target.value)
+                            setErros({ ...erros, formaPagamento: false })
+                            }}
+                            className={`w-full bg-[#E5F1DF] mt-1 py-1 px-1 rounded outline-none focus:bg-white focus:border focus:border-[#78BC5F] h-8 ${erros.formaPagamento ? "border-2 border-red-500" : ""}`}>
                                 <option value=""></option>
                                 {formasPagamento.map((fp) => (
                                     <option key={fp.id} value={fp.id}>
@@ -130,18 +155,22 @@ export default function CriarDespesa({fechar, atualizar, despesa}){
                     </div>
                     <div className="flex flex-col mt-5 w-[40%] mr-1">
                         <Input
+                            erro={erros.dataVencimento}    
                             nome="Data de Vencimento"
                             type="date"
                             value={dataVencimento}
-                            onChange={(e) => setDataVencimento(e.target.value)}
+                            onChange={(e) => {setDataVencimento(e.target.value)
+                            setErros({ ...erros, dataVencimento: false })
+                            }}
                         />
                     </div>
                 </div>
                 <div className="flex flex-row">
                     <div className="flex flex-col w-full">
                         <label className="text-[#635B5B] font-normal text-base mt-4">Status</label>
-                            <select value={status} 
-                            onChange={(e) => setStatus(e.target.value)} className="w-full bg-[#E5F1DF]  py-1 px-1 rounded outline-none focus:bg-white focus:border focus:border-[#78BC5F] h-8">
+                            <select value={status}
+                            onChange={(e) => setStatus(e.target.value)}
+                            className="w-full bg-[#E5F1DF]  py-1 px-1 rounded outline-none focus:bg-white focus:border focus:border-[#78BC5F] h-8 ">
                                 <option value="Não Pago">Não Pago</option>
                                 <option value="Agendado">Agendado</option>
                                 <option value="Pago">Pago</option>
