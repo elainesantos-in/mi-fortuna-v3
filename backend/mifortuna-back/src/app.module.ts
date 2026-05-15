@@ -7,6 +7,7 @@ import { ReceitasModule } from './receitas/receitas.module';
 import { FormaPagamentoModule } from './forma-pagamento/forma-pagamento.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { AuthModule } from './auth/auth.module';
+import { DespesasModule } from './despesas/despesas.module';
 
 
 @Module({
@@ -26,6 +27,7 @@ import { AuthModule } from './auth/auth.module';
     FormaPagamentoModule,
     UsuariosModule,
     AuthModule,
+    DespesasModule,
 ],
   controllers: [AppController],
   providers: [AppService],
