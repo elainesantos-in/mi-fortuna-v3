@@ -6,9 +6,10 @@ import BotaoCriarNovo from "@/app/components/botaoCriarNovo"
 import BotaoExcluir from "../components/botaoExcluir";
 import CriarDespesa from "./Despesa/modalCriarDespesa/criarDespesa"
 import { listarDespesas } from "@/app/service/despesaService"
-import ExcluirDespesa from "./Despesa/modalExcluirDespesa/excluirDespesa"
 import { listarCategorias } from "@/app/service/categoriaService"
 import { listarFormasPagamento } from "@/app/service/formaPagamentoService"
+import { listarReceitas } from "@/app/service/receitaService"
+import ExcluirDespesa from "./Despesa/modalExcluirDespesa/excluirDespesa"
 import { formatarDinheiro } from "@/app/utils/formatadores"
 
 export default function Inicio() {
@@ -26,6 +27,7 @@ export default function Inicio() {
     const [formasPagamento, setFormasPagamento] = useState([])
     const [filtroAtivo, setFiltroAtivo] = useState({ tipo: "", valor: "" })
     const [despesaAtualExcluir, setDespesaAtualExcluir] = useState(null)
+    const [receitas, setReceitas] = useState([])
 
     const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
     
@@ -46,9 +48,48 @@ export default function Inicio() {
     return true
 }).sort((desp1, desp2) => desp2.fixo - desp1.fixo)
 
+    const todosAnos = [...new Set(
+        despesas
+            .filter((desp) => desp.dataVencimento)
+            .map((desp) => new Date(desp.dataVencimento).getFullYear())
+    )].sort((a, b) => a - b)
+
+    const limiteGastoTotal = categorias.reduce((soma,cat) =>
+        soma + Number(cat.limiteGasto)
+    , 0)
+
+    const totalReceitas = receitas.reduce((soma,rec) => 
+        soma + Number(rec.valorSalario)
+    ,0)
+
+    const totalDespesas = despesas
+    .filter((desp) => {
+        if (!desp.dataVencimento) return false;
+
+        const data = new Date(desp.dataVencimento);
+
+        return (
+        data.getMonth() === mesAtual &&
+        data.getFullYear() === anoAtual
+        );
+    })
+    .reduce((soma, desp) => {
+        return soma + Number(desp.valor);
+    }, 0);
+    
+    const totalRestante = totalReceitas - totalDespesas
 
     let mesAnterior = mesAtual === 0 ? 11 : mesAtual - 1
     let proximoMes = mesAtual === 11 ? 0 : mesAtual + 1
+
+    async function buscarReceitas() {
+        const dados = await listarReceitas(true)
+        setReceitas(dados)
+    }
+
+    useEffect(() => {
+        buscarReceitas()
+    }, [])
     
     async function buscarDespesas(){
         const dados = await listarDespesas()
@@ -82,14 +123,43 @@ export default function Inicio() {
     }
 
     return (
-        <div className="min-h-screen bg-[#d1eed1] text-[#635B5B] mb-">
-            <div className="flex flex-row h-screen justify-between mt-8">
-                <div className="w-60 h-screen bg-[#ffffff] rounded-tr-2xl shadow-sm">
-                    
+        <div className="min-h-screen bg-[#d1eed1] text-[#635B5B]">
+            <div className="flex flex-row h-screen gap-6 mt-8">
+                <div className="flex flex-col pt-6 px-4 w-60 shrink-0 h-screen bg-[#ffffff] rounded-tr-2xl shadow-sm">
+                    <div className="flex flex-col">
+                        <label className="text-md text-[#635B5B] mb-1">Selecione o Ano</label>
+                        <select
+                            value={anoAtual}
+                            onChange={(e) => setAnoAtual(Number(e.target.value))}
+                            className="w-full h-10 bg-[#E5F1DF] px-3 rounded-md outline-none focus:bg-white focus:border focus:border-[#78BC5F]">
+                            {todosAnos.map((ano) => (
+                                <option key={ano} value={ano}>{ano}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="mt-12 font-semibold text-2xl">
+                        <h3 className="text-[#055902]">Limite de Gastos</h3>
+                        <p className="text-[#5470FF]">{formatarDinheiro(limiteGastoTotal)}</p>
+                    </div>
+                    <div className="mt-8 font-semibold text-2xl">
+                        <h3 className="text-[#055902]">Receitas</h3>
+                        <p className="text-[#66DA61]">{formatarDinheiro(totalReceitas)}</p>
+                    </div>
+                    <div className="mt-8 font-semibold text-2xl">
+                        <h3 className="text-[#055902]">Despesas</h3>
+                        <p className="text-[#ED6B5A]">{formatarDinheiro(totalDespesas)}</p>
+                    </div>
+                    <div className="mt-8 font-semibold text-2xl">
+                        <h3 className="text-[#055902]">Total Restante</h3>
+                        <p className={totalRestante <= limiteGastoTotal ? "text-[#66DA61]" : "text-[#ED6B5A]"}>{formatarDinheiro(totalRestante)}</p>
+                    </div>
+
                 </div>
-                <div className="flex flex-col">
-                    <div className="text-center text-2xl font-semibold my-4 bg-[#ffffff] p-2  rounded-lg shadow-sm">{anoAtual}</div>
-                    <div role="tablist" className="w-300 h-screen bg-[#ffffff] rounded-t-2xl shadow-sm">
+
+
+                <div className="flex flex-col flex-1 min-w-0">
+                    <div className="text-center text-2xl font-semibold mb-4 bg-[#ffffff] p-2 rounded-lg shadow-sm">{anoAtual}</div>
+                    <div role="tablist" className="w-full h-screen bg-[#ffffff] rounded-t-2xl shadow-sm">
                             <div className="flex flex-row">
                                 <button role="tab" className={`w-[50%] rounded-lg py-2 ${abaAtiva === "visaoGeral" ? "bg-[#69a955] text-[#ffffff]" : ""}`} onClick={() => setAbaAtiva("visaoGeral")}>Visão Geral</button>
 
@@ -126,11 +196,11 @@ export default function Inicio() {
                             </div>
                             {abaAtiva === "despesas" && (
                             <>
-                    <div className="flex flex-row items-end w-[85%] mx-auto p-2">
+                    <div className="flex flex-row items-end w-[90%] mx-auto p-2">
                         <div className="flex flex-row items-end gap-2">
                             <div className="flex flex-col">
                                 <label className="text-[#635B5B] font-normal text-sm mt-3">Pesquisar por:</label>
-                                <select value={tipoFiltro} className="w-32 h-10 bg-[#E5F1DF] py-1 px-1 rounded outline-none focus:bg-white focus:border focus:border-[#78BC5F]" onChange={(e) => setTipoFiltro(e.target.value)}>
+                                <select value={tipoFiltro} className="w-45 h-10 bg-[#E5F1DF] py-1 px-1 rounded outline-none focus:bg-white focus:border focus:border-[#78BC5F]" onChange={(e) => setTipoFiltro(e.target.value)}>
                                     <option value=""></option>
                                     <option value="categoria">Categoria</option>
                                     <option value="formaPagamento">Forma de Pagamento</option>
@@ -164,9 +234,9 @@ export default function Inicio() {
                             onClick={()=>setModalAberto(true)}
                         />
                     </div>
-                    <div className="flex flex-col justify-center ml-8">
-                        <div className="flex flex-row w-[90%] mx-2 mt-8 px-2 text-sm">
-                            <div className="flex-1">Nome</div>
+                    <div className="flex flex-col justify-center mx-8 w-[90%]">
+                        <div className="flex flex-row w-full mt-8 px-2 text-sm">
+                            <div className="flex-2">Nome</div>
                             <div className="flex-2">Categoria</div>
                             <div className="flex-1">Data Venc</div>
                             <div className="flex-1">For.Pag</div>
@@ -178,8 +248,8 @@ export default function Inicio() {
 
                         <div className="flex flex-col flex-1 overflow-y-auto">
                             {despesasFiltradas.map((desp) =>(
-                                <div key={desp.id} className={`flex flex-row w-[90%] items-center mx-2 rounded px-2 py-1.5 my-1 ${desp.status === "Pago" ? "bg-[#E4FDE3]" : "bg-[#EEEEEE]"}`}>
-                                    <div className="flex-1 font-semibold text-sm">{desp.nomeDespesa}</div>
+                                <div key={desp.id} className={`flex flex-row w-full items-center rounded px-2 py-1.5 my-1 ${desp.status === "Pago" ? "bg-[#E4FDE3]" : "bg-[#EEEEEE]"}`}>
+                                    <div className="flex-2 font-semibold text-sm">{desp.nomeDespesa}</div>
                                     <div className="flex-2 text-sm">{desp.categoria?.nome}</div>
                                     <div className="flex-1 font-semibold text-sm">{desp.dataVencimento}</div>
                                     <div className="flex-1 text-sm">{desp.formaPagamento?.nome}</div>
@@ -202,14 +272,54 @@ export default function Inicio() {
                 )}
 
                             {abaAtiva === "visaoGeral" && (
-                                <div className="p-6">
-                                    <p>Visão Geral - em construção</p>
-                                </div>
-                            )}
+                    <div className="p-6">
+                        <div className="flex flex-col justify-center ml-8">
+
+                            <div className="flex flex-row w-[90%] mx-2 mt-8 px-2 text-sm">
+                                <div className="flex-1">Categoria</div>
+                                <div className="flex-2">Lim. Gasto</div>
+                                <div className="flex-1">Gastos</div>
+                                <div className="flex-1">Valor Restante</div>
+                            </div>
+                            <div className="flex flex-col flex-1 overflow-y-auto">
+                                {categorias.map((cat) => {
+                                    const totalGasto = despesas
+                                        .filter((desp) => {
+                                            if (desp.categoria?.id !== cat.id) return false
+                                            if (!desp.dataVencimento) return false
+                                            const data = new Date(desp.dataVencimento)
+                                            return data.getMonth() === mesAtual && data.getFullYear() === anoAtual
+                                        })
+                                        .reduce((soma, desp) => soma + Number(desp.valor), 0)
+
+                                    return (
+                                        <div
+                                            key={cat.id}
+                                            className="flex flex-row w-[90%] items-center mx-2 rounded px-2 py-1.5 my-1 bg-[#E4FDE3]">
+                                            <div className="flex-1 font-semibold text-sm">
+                                                {cat.nome}
+                                            </div>
+                                            <div className="flex-2 text-sm">
+                                                {formatarDinheiro(cat.limiteGasto)}
+                                            </div>
+                                            <div className="flex-1 font-semibold text-sm">
+                                                {formatarDinheiro(totalGasto)}
+                                            </div>
+                                            <div className="flex-1 text-sm">
+                                                {formatarDinheiro(cat.limiteGasto - totalGasto)}
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+
+                        </div>
+                    </div>
+                )}
                             
                         </div>
                     </div>
-                <div className="w-60 h-screen bg-[#ffffff] rounded-tl-2xl shadow-sm">
+                <div className="w-60 shrink-0 h-screen bg-[#ffffff] rounded-tl-2xl shadow-sm">
 
                 </div>
             </div>

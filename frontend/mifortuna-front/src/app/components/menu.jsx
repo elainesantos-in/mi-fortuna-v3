@@ -39,11 +39,11 @@ export default function Menu(){
                     <Link href="/despesas" className="text-[#635B5B] font-semibold">Extrato</Link>
                 </li>
 
-                <li className="px-6 py-4 hover:bg-[#EEEEEE] hover:rounded-xl">
+                {/* <li className="px-6 py-4 hover:bg-[#EEEEEE] hover:rounded-xl">
                     <Link href="/poupanca" className="text-[#635B5B] font-semibold">Poupança</Link>
-                </li>
+                </li> */}
 
-                <li className="relative group px-6 py-4 hover:bg-[#EEEEEE] hover:rounded-xl">
+                {/* <li className="relative group px-6 py-4 hover:bg-[#EEEEEE] hover:rounded-xl">
                     <button className="text-[#635B5B] font-semibold">Indicadores</button>
 
                     <ul className="absolute hidden group-hover:block bg-white shadow-md mt-2 p-2 rounded-xl">
@@ -54,7 +54,7 @@ export default function Menu(){
                             <Link href="/indicadores/relatorios" className="text-[#635B5B] font-normal">Relatórios</Link>
                         </li>
                     </ul>
-                </li>
+                </li> */}
 
             </ul>
             <div className="relative group ml-auto mr-2">
