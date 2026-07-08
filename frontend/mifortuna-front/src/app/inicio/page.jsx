@@ -320,7 +320,25 @@ export default function Inicio() {
                         </div>
                     </div>
                 <div className="w-60 shrink-0 h-screen bg-[#ffffff] rounded-tl-2xl shadow-sm">
+                    {formasPagamento.map((fp) => {
+                        const totalGasto = despesas
+                            .filter((desp) => {
+                                if (!desp.formaPagamento) return false
+                                if (!desp.dataVencimento) return false
+                                const data = new Date(desp.dataVencimento)
+                                return desp.formaPagamento?.id === fp.id
+                                    && data.getMonth() === mesAtual
+                                    && data.getFullYear() === anoAtual
+                            })
+                            .reduce((soma, desp) => soma + Number(desp.valor), 0)
 
+                        return (
+                            <div key={fp.id} className="flex flex-col text-center bg-[#E4FDE3] rounded-md m-6 p-2">
+                                <h3 className="font-semibold text-[#055902] text-lg">{fp.nome}</h3>
+                                <p className="font-semibold text-[#cf0c0c] text-lg">{formatarDinheiro(totalGasto)}</p>
+                            </div>
+                        )
+                    })}
                 </div>
             </div>
             {modalAberto && (

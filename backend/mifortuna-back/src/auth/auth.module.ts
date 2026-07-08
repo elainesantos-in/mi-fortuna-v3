@@ -7,7 +7,7 @@ import { UsuariosModule } from '../usuarios/usuarios.module';
 @Module({
   imports: [ UsuariosModule,
     JwtModule.register({
-      secret: 'mifortuna-secret',
+      secret: process.env.JWT_SECRET ?? 'mifortuna-secret',
       signOptions: { expiresIn: '1d' },
     }),
   ],

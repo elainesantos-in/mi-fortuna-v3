@@ -36,7 +36,7 @@ export default function Menu(){
                 </li>
 
                 <li className="px-6 py-4 hover:bg-[#EEEEEE] hover:rounded-xl">
-                    <Link href="/despesas" className="text-[#635B5B] font-semibold">Extrato</Link>
+                    <Link href="/Extrato" className="text-[#635B5B] font-semibold">Extrato</Link>
                 </li>
 
                 {/* <li className="px-6 py-4 hover:bg-[#EEEEEE] hover:rounded-xl">
