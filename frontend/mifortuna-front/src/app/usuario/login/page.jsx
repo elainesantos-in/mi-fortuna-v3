@@ -43,7 +43,19 @@ export default function Login(){
                 />
 
                 <button onClick={() => ValidaLongin() } className="bg-[#78BC5F] text-[#FFFFFF] text-base w-full py-1 rounded mt-6 hover:bg-[#44892A]">Entrar</button>
-                
+
+                <div className="mt-6 p-3 rounded border border-[#78BC5F] bg-[#F3F9F0] text-center">
+                    <p className="text-[#105F0D] font-bold text-xs">Quer só dar uma olhada?</p>
+                    <p className="text-stone-600 text-xs mt-1">Email: demo@mifortuna.com</p>
+                    <p className="text-stone-600 text-xs">Senha: demo123</p>
+                    <button
+                        onClick={() => { setEmail("demo@mifortuna.com"); setSenha("demo123"); }}
+                        className="text-green-800 font-normal text-xs hover:underline mt-2"
+                    >
+                        Preencher com a conta demo
+                    </button>
+                </div>
+
                 <p className="w-full text-center text-stone-500 text-xs  mt-6">
                     Esqueceu a senha?  
                     <a className="text-green-800 font-normal text-xs hover:underline" href=""> Clique aqui</a>
