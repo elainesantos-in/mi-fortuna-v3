@@ -65,7 +65,7 @@ export default function Menu(){
                 <ul className="absolute right-0 hidden group-hover:block bg-white shadow-md pt-2 rounded-xl p-2 whitespace-nowrap">
 
                     <li className="px-6 py-3 text-sm hover:bg-gray-100 rounded-lg"><Link href="/perfil" className="text-[#635B5B] font-normal">Meu Perfil</Link></li>
-                    <li className="px-6 py-3 text-sm hover:bg-gray-100 rounded-lg"><Link href="/login" className="text-[#635B5B] font-normal">Sair</Link></li>
+                    <li className="px-6 py-3 text-sm hover:bg-gray-100 rounded-lg"><Link href="/usuario/login" className="text-[#635B5B] font-normal" onClick={() => localStorage.removeItem("token")}>Sair</Link></li>
                 </ul>
             </div>
     </div>

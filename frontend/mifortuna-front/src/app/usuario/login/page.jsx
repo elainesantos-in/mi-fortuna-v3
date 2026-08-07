@@ -9,13 +9,19 @@ export default function Login(){
     const router = useRouter();
     const [email, setEmail] = useState("")
     const [senha, setSenha] = useState("")
+    const [carregando, setCarregando] = useState(false)
 
  async function ValidaLongin(){
+        if (carregando) return;
+
+        setCarregando(true);
         try {
             await login(email,senha);
             router.push("/inicio");
         } catch (error){
             alert("Email ou senha inválidos")
+        } finally {
+            setCarregando(false);
         }
     }
 
@@ -42,7 +48,19 @@ export default function Login(){
                     onChange={(n) => setSenha(n.target.value)}
                 />
 
-                <button onClick={() => ValidaLongin() } className="bg-[#78BC5F] text-[#FFFFFF] text-base w-full py-1 rounded mt-6 hover:bg-[#44892A]">Entrar</button>
+                <button
+                    onClick={() => ValidaLongin() }
+                    disabled={carregando}
+                    className="bg-[#78BC5F] text-[#FFFFFF] text-base w-full py-1 rounded mt-6 hover:bg-[#44892A] disabled:bg-[#A9C79B] disabled:cursor-not-allowed"
+                >
+                    {carregando ? "Entrando..." : "Entrar"}
+                </button>
+
+                {carregando && (
+                    <p className="text-stone-500 text-xs text-center mt-2">
+                        O servidor pode estar acordando — isso leva até 1 minuto na primeira vez.
+                    </p>
+                )}
 
                 <div className="mt-6 p-3 rounded border border-[#78BC5F] bg-[#F3F9F0] text-center">
                     <p className="text-[#105F0D] font-bold text-xs">Quer só dar uma olhada?</p>
