@@ -14,13 +14,17 @@ import { DespesasModule } from './despesas/despesas.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: '123456',
-      database: 'mifortuna',
+      host: process.env.DB_HOST ?? 'localhost',
+      port: Number(process.env.DB_PORT ?? 5434),
+      username: process.env.DB_USERNAME ?? 'postgres',
+      password: process.env.DB_PASSWORD ?? '123456',
+      database: process.env.DB_DATABASE ?? 'mifortuna',
       autoLoadEntities: true,
       synchronize: true,
+      ssl:
+        process.env.DB_SSL === 'true'
+          ? { rejectUnauthorized: false }
+          : false,
     }),
     CategoriasModule,
     ReceitasModule,
